@@ -1,0 +1,201 @@
+<div class="ap-card">
+    <div class="ap-filter-bar" style="margin-bottom: 20px;">
+        <form action="index.php" method="GET" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; width: 100%;">
+            <input type="hidden" name="tab" value="courses">
+            <input type="hidden" name="subtab" value="categories">
+            <input type="text" name="search" value="{{search}}" placeholder="Buscar categoría..." class="form-control" style="max-width: 300px;">
+            <select name="visibility" class="form-select" style="max-width: 150px;">
+                <option value="-1" {{#visibility_all}}selected{{/visibility_all}}>Todos los estados</option>
+                <option value="1" {{#visibility_visible}}selected{{/visibility_visible}}>Visibles</option>
+                <option value="0" {{#visibility_hidden}}selected{{/visibility_hidden}}>Ocultos</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Buscar</button>
+            <button type="button" class="btn" style="margin-left: auto; background-color: #198754; color: #ffffff !important; border-color: #198754; font-weight: 600;" data-bs-toggle="modal" data-bs-target="#apCreateCategoryModal" data-toggle="modal" data-target="#apCreateCategoryModal">
+                <i class="fa fa-plus-circle" aria-hidden="true"></i> Crear Categoría
+            </button>
+        </form>
+    </div>
+    <div class="ap-bulk-actions" style="display: none; padding: 10px; background-color: #f8f9fa; border-radius: 4px; margin-bottom: 15px; border: 1px solid #dee2e6;">
+        <span style="margin-right: 15px; font-weight: bold;"><span id="ap-category-selected-count">0</span> seleccionadas</span>
+        
+        <button type="button" class="btn btn-sm btn-outline-warning ap-category-bulk-btn" data-action="hidecategory" id="ap-cat-bulk-hide-btn" title="Ocultar seleccionadas">
+            {{#pix}} t/hide, core {{/pix}} Ocultar
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-success ap-category-bulk-btn" data-action="showcategory" id="ap-cat-bulk-show-btn" title="Mostrar seleccionadas" style="margin-left: 5px;">
+            {{#pix}} t/show, core {{/pix}} Mostrar
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-danger ap-category-bulk-btn" data-action="deletecategory" id="ap-cat-bulk-delete-btn" title="Eliminar seleccionadas" style="margin-left: 5px;">
+            {{#pix}} t/delete, core {{/pix}} Eliminar
+        </button>
+    </div>
+
+    <div class="ap-table-wrapper">
+        <table class="ap-table table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th style="width: 40px; text-align: center;">
+                        <input type="checkbox" id="ap-select-all-categories" class="form-check-input" style="cursor: pointer;">
+                    </th>
+                    {{#headers}}
+                    <th>
+                        <a href="{{url}}" style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between; gap: 5px;">
+                            <span>{{label}}</span>
+                            {{#issorted}}
+                                {{#sortdir}}<i class="fa fa-sort-{{sortdir}}" aria-hidden="true"></i>{{/sortdir}}
+                            {{/issorted}}
+                            {{^issorted}}
+                                <i class="fa fa-sort text-muted" style="opacity: 0.3;" aria-hidden="true"></i>
+                            {{/issorted}}
+                        </a>
+                    </th>
+                    {{/headers}}
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#categories}}
+                <tr>
+                    <td style="text-align: center;">
+                        <input type="checkbox" class="form-check-input ap-category-checkbox" value="{{id}}" data-category-visible="{{visible}}" data-candelete="{{candelete}}" style="cursor: pointer;">
+                    </td>
+                    <td>{{name}}</td>
+                    <td>{{parentname}}</td>
+                    <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{description}}">{{description}}</td>
+                    <td>{{coursecount}}</td>
+                    <td>
+                        {{#isvisible}}
+                        <span class="badge bg-success" style="padding: 3px 8px; border-radius: 10px; font-size: 0.85em;">Visible</span>
+                        {{/isvisible}}
+                        {{^isvisible}}
+                        <span class="badge bg-secondary" style="padding: 3px 8px; border-radius: 10px; font-size: 0.85em;">Oculto</span>
+                        {{/isvisible}}
+                    </td>
+                    <td style="min-width: 100px;">
+                        {{#isvisible}}
+                        <button type="button" class="btn btn-sm text-warning ap-category-action" style="border: none; background: transparent; padding: 2px 6px;" data-ap-action="hide" data-categoryid="{{id}}" title="Ocultar">
+                            {{#pix}} t/hide, core {{/pix}}
+                        </button>
+                        {{/isvisible}}
+                        {{^isvisible}}
+                        <button type="button" class="btn btn-sm text-success ap-category-action" style="border: none; background: transparent; padding: 2px 6px;" data-ap-action="show" data-categoryid="{{id}}" title="Mostrar">
+                            {{#pix}} t/show, core {{/pix}}
+                        </button>
+                        {{/isvisible}}
+                        <button type="button" class="btn btn-sm text-secondary ap-category-action" style="border: none; background: transparent; padding: 2px 6px;" data-ap-action="edit" data-categoryid="{{id}}" data-categoryname="{{name}}" data-categoryparent="{{parent}}" data-categorydesc="{{description}}" title="Editar">
+                            {{#pix}} t/edit, core {{/pix}}
+                        </button>
+                        {{#candelete}}
+                        <button type="button" class="btn btn-sm text-danger ap-category-action" style="border: none; background: transparent; padding: 2px 6px;" data-ap-action="delete" data-categoryid="{{id}}" title="Eliminar">
+                            {{#pix}} t/delete, core {{/pix}}
+                        </button>
+                        {{/candelete}}
+                        {{^candelete}}
+                        <button type="button" class="btn btn-sm text-muted" style="border: none; background: transparent; padding: 2px 6px; cursor: not-allowed;" title="No se puede eliminar (tiene cursos)" disabled>
+                            {{#pix}} t/delete, core {{/pix}}
+                        </button>
+                        {{/candelete}}
+                    </td>
+                </tr>
+                {{/categories}}
+                {{^categories}}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 20px;">No hay categorías disponibles.</td>
+                </tr>
+                {{/categories}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Crear Categoría -->
+<div class="modal fade" id="apCreateCategoryModal" tabindex="-1" role="dialog" aria-labelledby="apCreateCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form action="action.php" method="POST">
+            <input type="hidden" name="action" value="createcategory">
+            <input type="hidden" name="tab" value="courses">
+            <input type="hidden" name="subtab" value="categories">
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="apCreateCategoryModalLabel">Crear Nueva Categoría</h5>
+                    <button type="button" class="close btn-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="create_cat_name" class="form-label">Nombre <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="create_cat_name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="create_cat_parent" class="form-label">Categoría Padre <span class="text-danger">*</span></label>
+                        <select class="form-select" id="create_cat_parent" name="parent" required>
+                            <option value="0">Top</option>
+                            {{#all_categories}}
+                            <option value="{{id}}">{{name}}</option>
+                            {{/all_categories}}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="create_cat_description" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="create_cat_description" name="description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear Categoría</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Edit Category -->
+<div class="modal fade" id="apEditCategoryModal" tabindex="-1" role="dialog" aria-labelledby="apEditCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form action="action.php" method="POST">
+            <input type="hidden" name="action" value="editcategory">
+            <input type="hidden" name="tab" value="courses">
+            <input type="hidden" name="subtab" value="categories">
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
+            <input type="hidden" name="categoryid" id="edit_categoryid" value="">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="apEditCategoryModalLabel">Editar Categoría</h5>
+                    <button type="button" class="close btn-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit_name" class="form-label">Nombre <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="edit_name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_parent" class="form-label">Categoría Padre <span class="text-danger">*</span></label>
+                        <select class="form-select" id="edit_parent" name="parent" required>
+                            <option value="0">Top</option>
+                            {{#all_categories}}
+                            <option value="{{id}}">{{name}}</option>
+                            {{/all_categories}}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_description" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="edit_description" name="description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{#js}}
+require(['local_admin_panel/category_actions'], function(actions) {
+    actions.init();
+});
+{{/js}}

@@ -1,0 +1,273 @@
+<div class="ap-card">
+    <div class="ap-filter-bar" style="margin-bottom: 20px;">
+        <form action="index.php" method="GET" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; width: 100%;">
+            <input type="hidden" name="tab" value="courses">
+            <input type="hidden" name="subtab" value="courses">
+            <input type="text" name="search" value="{{search}}" placeholder="Buscar curso..." class="form-control" style="max-width: 300px;">
+            <select name="category" class="form-select" style="max-width: 200px;">
+                <option value="0">Todas las categorías</option>
+                {{#categories}}
+                <option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                {{/categories}}
+            </select>
+            <select name="visibility" class="form-select" style="max-width: 150px;">
+                <option value="-1" {{#visibility_all}}selected{{/visibility_all}}>Todos los estados</option>
+                <option value="1" {{#visibility_visible}}selected{{/visibility_visible}}>Visibles</option>
+                <option value="0" {{#visibility_hidden}}selected{{/visibility_hidden}}>Ocultos</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Buscar</button>
+            <button type="button" class="btn" style="margin-left: auto; background-color: #198754; color: #ffffff !important; border-color: #198754; font-weight: 600;" data-bs-toggle="modal" data-bs-target="#apCreateCourseModal" data-toggle="modal" data-target="#apCreateCourseModal">
+                <i class="fa fa-plus-circle" aria-hidden="true"></i> Crear Curso
+            </button>
+        </form>
+    </div>
+    <div class="ap-bulk-actions" style="display: none; padding: 10px; background-color: #f8f9fa; border-radius: 4px; margin-bottom: 15px; border: 1px solid #dee2e6;">
+        <span style="margin-right: 15px; font-weight: bold;"><span id="ap-selected-count">0</span> seleccionados</span>
+        
+        <button type="button" class="btn btn-sm btn-outline-warning ap-bulk-action-btn" data-action="hidecourse" id="ap-bulk-hide-btn" title="Ocultar seleccionados">
+            {{#pix}} t/hide, core {{/pix}} Ocultar
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-success ap-bulk-action-btn" data-action="showcourse" id="ap-bulk-show-btn" title="Mostrar seleccionados">
+            {{#pix}} t/show, core {{/pix}} Mostrar
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-info ap-bulk-action-btn" data-action="movecourse" title="Mover seleccionados">
+            <i class="fa fa-folder-open fa-fw" aria-hidden="true"></i> Mover
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-danger ap-bulk-action-btn" data-action="deletecourse" title="Eliminar seleccionados">
+            {{#pix}} t/delete, core {{/pix}} Eliminar
+        </button>
+    </div>
+
+    <div class="ap-table-wrapper">
+        <table class="ap-table table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th style="width: 40px; text-align: center;">
+                        <input type="checkbox" id="ap-select-all-courses" class="form-check-input" style="cursor: pointer;">
+                    </th>
+                    <th>
+                        <a href="{{url_sort_fullname}}" style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between; gap: 5px;">
+                            <span>Nombre Completo</span>
+                            {{#sort_fullname_active}}
+                                {{#sort_fullname_is_asc}}<i class="fa fa-sort-asc" aria-hidden="true"></i>{{/sort_fullname_is_asc}}
+                                {{^sort_fullname_is_asc}}<i class="fa fa-sort-desc" aria-hidden="true"></i>{{/sort_fullname_is_asc}}
+                            {{/sort_fullname_active}}
+                            {{^sort_fullname_active}}
+                                <i class="fa fa-sort text-muted" style="opacity: 0.3;" aria-hidden="true"></i>
+                            {{/sort_fullname_active}}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="{{url_sort_categoryname}}" style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between; gap: 5px;">
+                            <span>Categoría</span>
+                            {{#sort_categoryname_active}}
+                                {{#sort_categoryname_is_asc}}<i class="fa fa-sort-asc" aria-hidden="true"></i>{{/sort_categoryname_is_asc}}
+                                {{^sort_categoryname_is_asc}}<i class="fa fa-sort-desc" aria-hidden="true"></i>{{/sort_categoryname_is_asc}}
+                            {{/sort_categoryname_active}}
+                            {{^sort_categoryname_active}}
+                                <i class="fa fa-sort text-muted" style="opacity: 0.3;" aria-hidden="true"></i>
+                            {{/sort_categoryname_active}}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="{{url_sort_visible}}" style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between; gap: 5px;">
+                            <span>Estado</span>
+                            {{#sort_visible_active}}
+                                {{#sort_visible_is_asc}}<i class="fa fa-sort-asc" aria-hidden="true"></i>{{/sort_visible_is_asc}}
+                                {{^sort_visible_is_asc}}<i class="fa fa-sort-desc" aria-hidden="true"></i>{{/sort_visible_is_asc}}
+                            {{/sort_visible_active}}
+                            {{^sort_visible_active}}
+                                <i class="fa fa-sort text-muted" style="opacity: 0.3;" aria-hidden="true"></i>
+                            {{/sort_visible_active}}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="{{url_sort_enrolledcount}}" style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between; gap: 5px;">
+                            <span>Matriculados</span>
+                            {{#sort_enrolledcount_active}}
+                                {{#sort_enrolledcount_is_asc}}<i class="fa fa-sort-asc" aria-hidden="true"></i>{{/sort_enrolledcount_is_asc}}
+                                {{^sort_enrolledcount_is_asc}}<i class="fa fa-sort-desc" aria-hidden="true"></i>{{/sort_enrolledcount_is_asc}}
+                            {{/sort_enrolledcount_active}}
+                            {{^sort_enrolledcount_active}}
+                                <i class="fa fa-sort text-muted" style="opacity: 0.3;" aria-hidden="true"></i>
+                            {{/sort_enrolledcount_active}}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="{{url_sort_completedcount}}" style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between; gap: 5px;">
+                            <span>Completados</span>
+                            {{#sort_completedcount_active}}
+                                {{#sort_completedcount_is_asc}}<i class="fa fa-sort-asc" aria-hidden="true"></i>{{/sort_completedcount_is_asc}}
+                                {{^sort_completedcount_is_asc}}<i class="fa fa-sort-desc" aria-hidden="true"></i>{{/sort_completedcount_is_asc}}
+                            {{/sort_completedcount_active}}
+                            {{^sort_completedcount_active}}
+                                <i class="fa fa-sort text-muted" style="opacity: 0.3;" aria-hidden="true"></i>
+                            {{/sort_completedcount_active}}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="{{url_sort_cohortscount}}" style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between; gap: 5px;">
+                            <span>Audiencias</span>
+                            {{#sort_cohortscount_active}}
+                                {{#sort_cohortscount_is_asc}}<i class="fa fa-sort-asc" aria-hidden="true"></i>{{/sort_cohortscount_is_asc}}
+                                {{^sort_cohortscount_is_asc}}<i class="fa fa-sort-desc" aria-hidden="true"></i>{{/sort_cohortscount_is_asc}}
+                            {{/sort_cohortscount_active}}
+                            {{^sort_cohortscount_active}}
+                                <i class="fa fa-sort text-muted" style="opacity: 0.3;" aria-hidden="true"></i>
+                            {{/sort_cohortscount_active}}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="{{url_sort_progress}}" style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: space-between; gap: 5px;">
+                            <span>Progreso</span>
+                            {{#sort_progress_active}}
+                                {{#sort_progress_is_asc}}<i class="fa fa-sort-asc" aria-hidden="true"></i>{{/sort_progress_is_asc}}
+                                {{^sort_progress_is_asc}}<i class="fa fa-sort-desc" aria-hidden="true"></i>{{/sort_progress_is_asc}}
+                            {{/sort_progress_active}}
+                            {{^sort_progress_active}}
+                                <i class="fa fa-sort text-muted" style="opacity: 0.3;" aria-hidden="true"></i>
+                            {{/sort_progress_active}}
+                        </a>
+                    </th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#courses}}
+                <tr>
+                    <td style="text-align: center;">
+                        <input type="checkbox" class="form-check-input ap-course-checkbox" value="{{id}}" data-course-name="{{fullname}}" data-course-visible="{{visible}}" style="cursor: pointer;">
+                    </td>
+                    <td>{{fullname}}</td>
+                    <td>{{categoryname}}</td>
+                    <td>
+                        {{#isvisible}}
+                        <span class="badge bg-success" style="padding: 3px 8px; border-radius: 10px; font-size: 0.85em;">Visible</span>
+                        {{/isvisible}}
+                        {{^isvisible}}
+                        <span class="badge bg-secondary" style="padding: 3px 8px; border-radius: 10px; font-size: 0.85em;">Oculto</span>
+                        {{/isvisible}}
+                    </td>
+                    <td>{{enrolledcount}}</td>
+                    <td>{{completedcount}}</td>
+                    <td>{{cohortscount}}</td>
+                    <td style="min-width: 150px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.85em; margin-bottom: 3px;">
+                            <span>{{progress_percent}}%</span>
+                            <span>{{completedcount}}/{{enrolledcount}}</span>
+                        </div>
+                        <div style="width: 100%; background-color: #e9ecef; border-radius: 4px; height: 8px; overflow: hidden;">
+                            <div style="width: {{progress_percent}}%; background-color: #007bff; height: 100%;"></div>
+                        </div>
+                    </td>
+                    <td style="min-width: 130px;">
+                        <a href="{{url_view}}" class="btn btn-sm text-secondary ap-course-action" style="border: none; background: transparent; padding: 2px 6px;" data-ap-action="view" data-courseid="{{id}}" title="Ir al curso">
+                            {{#pix}} i/course, core {{/pix}}
+                        </a>
+                        {{#isvisible}}
+                        <a href="{{url_hide}}" class="btn btn-sm text-warning ap-course-action" style="border: none; background: transparent; padding: 2px 6px;" data-ap-action="hide" data-courseid="{{id}}" title="Ocultar curso">
+                            {{#pix}} t/hide, core {{/pix}}
+                        </a>
+                        {{/isvisible}}
+                        {{^isvisible}}
+                        <a href="{{url_show}}" class="btn btn-sm text-success ap-course-action" style="border: none; background: transparent; padding: 2px 6px;" data-ap-action="show" data-courseid="{{id}}" title="Mostrar curso">
+                            {{#pix}} t/show, core {{/pix}}
+                        </a>
+                        {{/isvisible}}
+                        <a href="{{url_move}}" class="btn btn-sm text-info ap-course-action" style="border: none; background: transparent; padding: 2px 6px;" data-ap-action="move" data-courseid="{{id}}" title="Mover categoría">
+                            <i class="fa fa-folder-open fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <a href="{{url_delete}}" class="btn btn-sm text-danger ap-course-action" style="border: none; background: transparent; padding: 2px 6px;" data-ap-action="delete" data-courseid="{{id}}" title="Eliminar curso">
+                            {{#pix}} t/delete, core {{/pix}}
+                        </a>
+                    </td>
+                </tr>
+                {{/courses}}
+                {{^courses}}
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 20px;">No hay cursos disponibles que coincidan con la búsqueda.</td>
+                </tr>
+                {{/courses}}
+            </tbody>
+        </table>
+    </div>
+
+    {{#has_pagination}}
+    <div class="ap-pagination" style="margin-top: 20px; display: flex; justify-content: center; gap: 5px;">
+        {{#pages}}
+        <a href="{{url}}" class="btn {{#active}}btn-primary{{/active}}{{^active}}btn-outline-primary{{/active}}" style="padding: 5px 10px; text-decoration: none;">
+            {{pagenum}}
+        </a>
+        {{/pages}}
+    </div>
+    {{/has_pagination}}
+</div>
+
+<div id="ap-move-modal-template" style="display: none;">
+    <label for="__AP_CAT_ID__" style="width: 100%;">
+        Selecciona la nueva categoría a la que deseas mover este curso:
+        <select id="__AP_CAT_ID__" class="form-select custom-select w-100 ap-new-category-select" style="margin-top: 5px; border: 1px solid #ced4da !important; outline: none !important; box-shadow: none !important; background-color: #fff !important;">
+            {{#categories}}
+            <option value="{{id}}">{{name}}</option>
+            {{/categories}}
+        </select>
+    </label>
+</div>
+
+<!-- Modal para Crear Curso -->
+<div class="modal fade" id="apCreateCourseModal" tabindex="-1" role="dialog" aria-labelledby="apCreateCourseModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form action="action.php" method="POST">
+            <input type="hidden" name="action" value="createcourse">
+            <input type="hidden" name="tab" value="courses">
+            <input type="hidden" name="subtab" value="courses">
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="apCreateCourseModalLabel">Crear Nuevo Curso</h5>
+                    <button type="button" class="close btn-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="create_fullname" class="form-label">Nombre Completo <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="create_fullname" name="fullname" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="create_shortname" class="form-label">Nombre Corto <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="create_shortname" name="shortname" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="create_summary" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="create_summary" name="summary" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="create_category" class="form-label">Categoría <span class="text-danger">*</span></label>
+                        <select class="form-select" id="create_category" name="categoryid" required>
+                            {{#categories}}
+                            <option value="{{id}}">{{name}}</option>
+                            {{/categories}}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="create_visible" name="visible" value="1" checked>
+                            <label class="form-check-label" for="create_visible">Curso Visible</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear Curso</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{#js}}
+require(['local_admin_panel/course_actions'], function(actions) {
+    actions.init();
+});
+{{/js}}

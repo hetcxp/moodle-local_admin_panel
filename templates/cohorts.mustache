@@ -1,0 +1,28 @@
+<div class="ap-card">
+    <div class="ap-card-title">{{#str}}list_cohorts, local_admin_panel{{/str}}</div>
+    <div class="ap-table-wrapper">
+        <table class="ap-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>ID Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#cohorts}}
+                <tr>
+                    <td>{{id}}</td>
+                    <td>{{name}}</td>
+                    <td>{{idnumber}}</td>
+                </tr>
+                {{/cohorts}}
+                {{^cohorts}}
+                <tr>
+                    <td colspan="3">No hay audiencias disponibles.</td>
+                </tr>
+                {{/cohorts}}
+            </tbody>
+        </table>
+    </div>
+</div>

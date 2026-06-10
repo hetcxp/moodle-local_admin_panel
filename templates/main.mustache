@@ -1,0 +1,12 @@
+<div class="local-admin-panel-wrapper">
+    <div class="ap-tabs">
+        <a href="{{url_dashboard}}" class="ap-tab-item {{#tab_dashboard_active}}active{{/tab_dashboard_active}}">{{#str}}tab_dashboard, local_admin_panel{{/str}}</a>
+        <a href="{{url_courses}}" class="ap-tab-item {{#tab_courses_active}}active{{/tab_courses_active}}">{{#str}}tab_courses, local_admin_panel{{/str}}</a>
+        <a href="{{url_users}}" class="ap-tab-item {{#tab_users_active}}active{{/tab_users_active}}">{{#str}}tab_users, local_admin_panel{{/str}}</a>
+        <a href="{{url_cohorts}}" class="ap-tab-item {{#tab_cohorts_active}}active{{/tab_cohorts_active}}">{{#str}}tab_cohorts, local_admin_panel{{/str}}</a>
+    </div>
+
+    <div class="ap-tab-content">
+        {{{content}}}
+    </div>
+</div>

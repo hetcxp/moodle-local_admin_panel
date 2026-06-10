@@ -1,0 +1,32 @@
+<div class="ap-card">
+    <div class="ap-card-title">{{#str}}list_users, local_admin_panel{{/str}}</div>
+    <div class="ap-table-wrapper">
+        <table class="ap-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#users}}
+                <tr>
+                    <td>{{id}}</td>
+                    <td>{{firstname}}</td>
+                    <td>{{lastname}}</td>
+                    <td>{{email}}</td>
+                    <td>{{#suspended}}Suspendido{{/suspended}}{{^suspended}}Activo{{/suspended}}</td>
+                </tr>
+                {{/users}}
+                {{^users}}
+                <tr>
+                    <td colspan="5">No hay usuarios disponibles.</td>
+                </tr>
+                {{/users}}
+            </tbody>
+        </table>
+    </div>
+</div>
